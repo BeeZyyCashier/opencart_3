@@ -74,27 +74,26 @@ class ControllerExtensionPaymentBeezyycashier extends Controller
     public function callback()
     {
         $this->response->addHeader('Content-Type: application/json');
+        $result = [];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $postedData = json_decode(file_get_contents('php://input'), true);
             if (!is_array($postedData)) {
                 $postedData = [];
-                $result = [
-                    'message' => 'Invalid IPN'
-                ];
+                $result['message'] = 'Invalid IPN';
             }
             if (!empty($postedData)) {
                 $this->load->model('checkout/order');
 
                 $order_info = $this->model_checkout_order->getOrder($postedData['reference']);
                 $checkIPN = $this->checkIPN($postedData['payment_id']);
-                if ($checkIPN['amount'] == $postedData['amount'] && $checkIPN['currency'] == $postedData['currency'] && $checkIPN['status'] == $postedData['status'] && $checkIPN['reference'] == $postedData['reference']) {
-                    $success_ipn = true;
-                } else {
-                    $success_ipn = false;
-                    $result = [
-                        'message' => 'Invalid IPN Data'
-                    ];
+                if (!$order_info) {
+                    if ($checkIPN['amount'] == $postedData['amount'] && $checkIPN['currency'] == $postedData['currency'] && $checkIPN['status'] == $postedData['status'] && $checkIPN['reference'] == $postedData['reference']) {
+                        $success_ipn = true;
+                    } else {
+                        $success_ipn = false;
+                        $result['message'] = 'Invalid IPN Data';
+                    }
                 }
                 if (!empty($checkIPN)) {
                     if ($success_ipn && $order_info['total'] == $postedData['amount'] && $order_info['currency_code'] == $postedData['currency'] && $postedData['reference'] == $order_info['order_id']) {
@@ -103,18 +102,14 @@ class ControllerExtensionPaymentBeezyycashier extends Controller
                         } else {
                             $this->model_checkout_order->addOrderHistory($postedData['reference'], $this->config->get('payment_beezyycashier_order_fail_status'));
                         }
-                        $result = [
-                            'message' => 'Success'
-                        ];
+                        $result['message'] = 'Success';
                     }
                 }
             }
 
         } else {
             $this->response->addHeader($this->request->server['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
-            $result = [
-                'message' => 'Method Not Allowed'
-            ];
+            $result['message'] = 'Method Not Allowed';
         }
         $this->response->setOutput(json_encode($result));
     }
