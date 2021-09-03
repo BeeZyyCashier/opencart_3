@@ -1,5 +1,5 @@
 ### System Requirements
-* Opencart 3+
+* Opencart 3.0.3.5+
 * PHP 7.3+
 
 ### Installation
