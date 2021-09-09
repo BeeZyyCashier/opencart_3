@@ -87,13 +87,16 @@ class ControllerExtensionPaymentBeezyycashier extends Controller
 
                 $order_info = $this->model_checkout_order->getOrder($postedData['reference']);
                 $checkIPN = $this->checkIPN($postedData['payment_id']);
-                if (!$order_info) {
+                if ($order_info) {
                     if ($checkIPN['amount'] == $postedData['amount'] && $checkIPN['currency'] == $postedData['currency'] && $checkIPN['status'] == $postedData['status'] && $checkIPN['reference'] == $postedData['reference']) {
                         $success_ipn = true;
                     } else {
                         $success_ipn = false;
                         $result['message'] = 'Invalid IPN Data';
                     }
+                } else {
+                    $success_ipn = false;
+                    $result['message'] = 'Invalid Order';
                 }
                 if (!empty($checkIPN)) {
                     if ($success_ipn && $order_info['total'] == $postedData['amount'] && $order_info['currency_code'] == $postedData['currency'] && $postedData['reference'] == $order_info['order_id']) {
