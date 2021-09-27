@@ -40,7 +40,7 @@ class ControllerExtensionPaymentBeezyycashier extends Controller
             'reference' => $invoice['data']['reference'],
             'payment_id' => $invoice['data']['payment_id'],
         ];
-        $extraData = json_encode($extraData,JSON_FORCE_OBJECT);
+        $extraData = json_encode($extraData, JSON_FORCE_OBJECT);
         $this->model_extension_payment_beezyycashier->setExtradata($this->session->data['order_id'], $extraData);
 
         $data['action'] = $invoice['data']['url'];
