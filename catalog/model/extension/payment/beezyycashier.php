@@ -28,4 +28,9 @@ class ModelExtensionPaymentBeezyycashier extends Model {
 
 		return $method_data;
 	}
+
+    public function setExtradata($order_id, $data){
+        $this->db->query("UPDATE `" . DB_PREFIX . "order` SET payment_custom_field='" . $data . "' WHERE order_id= '" . (int)$order_id . "'");
+        return true;
+    }
 }

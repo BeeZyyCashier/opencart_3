@@ -33,6 +33,16 @@ class ControllerExtensionPaymentBeezyycashier extends Controller
         $requestData['payment_method'] = $this->config->get('payment_beezyycashier_payment_method');
 
         $invoice = $this->createInvoice($requestData);
+
+        //save extradata
+        $this->load->model('extension/payment/beezyycashier');
+        $extraData = [
+            'reference' => $invoice['data']['reference'],
+            'payment_id' => $invoice['data']['payment_id'],
+        ];
+        $extraData = json_encode($extraData,JSON_FORCE_OBJECT);
+        $this->model_extension_payment_beezyycashier->setExtradata($this->session->data['order_id'], $extraData);
+
         $data['action'] = $invoice['data']['url'];
 
         return $this->load->view('extension/payment/beezyycashier', $data);
