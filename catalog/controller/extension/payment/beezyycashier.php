@@ -30,7 +30,7 @@ class ControllerExtensionPaymentBeezyycashier extends Controller
         $requestData['urls']['success'] = $this->url->link('checkout/success', false);
         $requestData['urls']['fail'] = $this->url->link('checkout/failure', false);
         $requestData['urls']['notification'] = $this->url->link('extension/payment/beezyycashier/callback', false);
-        $requestData['payment_method'] = $this->config->get('payment_beezyycashier_payment_method');
+        $requestData['payment_method'] = substr($this->session->data['payment_method']['code'], 14);
 
         $invoice = $this->createInvoice($requestData);
 

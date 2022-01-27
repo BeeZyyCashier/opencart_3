@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+    <name>BeezyyCashier</name>
+    <code>beezyycashier</code>
+    <version>1.0</version>
+    <author>Test</author>
+    <link>https://beezyycashier.com</link>
+
+    <file path="catalog/controller/checkout/payment_method.php">
+        <operation error="skip">
+            <search><![CDATA[$method = $this->{'model_extension_payment_' . $result['code']}->getMethod($this->session->data['payment_address'], $total);]]>
+            </search>
+            <add position="replace" offset="11">
+                <![CDATA[if ($result['code'] == 'beezyycashier') {
+                        $methods = $this->model_extension_payment_beezyycashier->getMethod($this->session->data['payment_address'], $total, true);
+                        foreach ($methods as $item) {
+                            $method_data[$item['code']] = $item;
+                        }
+                    } else {
+                        $method = $this->{'model_extension_payment_' . $result['code']}->getMethod($this->session->data['payment_address'], $total);
+                        if ($method) {
+                            if ($recurring) {
+                                if (property_exists($this->{'model_extension_payment_' . $result['code']}, 'recurringPayments') && $this->{'model_extension_payment_' . $result['code']}->recurringPayments()) {
+                                    $method_data[$result['code']] = $method;
+                                }
+                            } else {
+                                $method_data[$result['code']] = $method;
+                            }
+                        }
+                    }
+                    }]]>
+            </add>
+        </operation>
+    </file>
+
+    <file path="catalog/controller/checkout/confirm.php">
+        <operation error="skip">
+            <search><![CDATA[$data['payment'] = $this->load->controller('extension/payment/' . $this->session->data['payment_method']['code']);]]>
+            </search>
+            <add position="replace">
+                <![CDATA[if (mb_substr($this->session->data['payment_method']['code'], 0, 14) == 'beezyycashier-') {
+                $data['payment'] = $this->load->controller('extension/payment/beezyycashier');
+            } else {
+                $data['payment'] = $this->load->controller('extension/payment/' . $this->session->data['payment_method']['code']);
+            }
+]]>
+            </add>
+        </operation>
+    </file>
+
+</modification>

@@ -10,13 +10,23 @@ $_['text_beezyycashier'] = '<a href="https://beezyycashier.com/?utm_source=openc
 
 // Entry
 $_['entry_secret_key'] = 'Secret key';
-$_['entry_payment_method'] = 'Payment Method';
+$_['entry_payment_method'] = 'Select Payment Method';
 $_['entry_total'] = 'Total';
 $_['entry_order_status'] = 'Order Status';
 $_['entry_fail_status'] = 'Order Fail Status';
 $_['entry_geo_zone'] = 'Geo Zone';
 $_['entry_status'] = 'Status';
 $_['entry_sort_order'] = 'Sort Order';
+
+
+// Payment Method Table
+$_['text_select_payment_method'] = 'Selected Payment Methods:';
+$_['text_payment_method_id'] = 'Payment Method ID';
+$_['text_payment_method_name'] = 'Payment Method Name';
+$_['text_payment_method_image'] = 'Payment Method Image';
+$_['text_payment_method_apple_devices'] = 'Show Only on Apple Devices';
+$_['text_payment_method_sort'] = 'Payment Method Sort';
+$_['text_add_payment_method'] = 'Add Payment Method';
 
 // Help
 $_['help_secret_key'] = 'The secret key you can get in project settings.';

@@ -13,9 +13,10 @@ class ControllerExtensionPaymentBeezyycashier extends Controller
         $this->load->model('setting/setting');
 
         if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
+            $this->request->post['payment_beezyycashier_pm'] = serialize($this->request->post['payment_beezyycashier_pm']);
             $this->model_setting_setting->editSetting('payment_beezyycashier', $this->request->post);
 
-            $this->response->redirect($this->url->link('extension/payment/beezyycashier', 'user_token=' . $this->session->data['user_token'], true));
+        $this->response->redirect($this->url->link('extension/payment/beezyycashier', 'user_token=' . $this->session->data['user_token'], true));
         }
 
         if (isset($this->error['warning'])) {
@@ -63,10 +64,10 @@ class ControllerExtensionPaymentBeezyycashier extends Controller
             $data['payment_beezyycashier_secret_key'] = $this->config->get('payment_beezyycashier_secret_key');
         }
 
-        if (isset($this->request->post['payment_beezyycashier_payment_method'])) {
-            $data['payment_beezyycashier_payment_method'] = $this->request->post['payment_beezyycashier_payment_method'];
+        if (isset($this->request->post['payment_beezyycashier_pm'])) {
+            $data['payment_beezyycashier_pm'] = $this->request->post['payment_beezyycashier_pm'];
         } else {
-            $data['payment_beezyycashier_payment_method'] = $this->config->get('payment_beezyycashier_payment_method');
+            $data['payment_beezyycashier_pm'] = unserialize($this->config->get('payment_beezyycashier_pm'));
         }
 
         if (isset($this->request->post['payment_beezyycashier_total'])) {
@@ -115,10 +116,16 @@ class ControllerExtensionPaymentBeezyycashier extends Controller
 
         $data['payment_methods_beezyy'] = $this->getPaymentMethods($data['payment_beezyycashier_secret_key']);
 
+        $this->load->model('localisation/language');
+
+        $data['languages'] = $this->model_localisation_language->getLanguages();
+
+        $this->load->model('tool/image');
+        $data['placeholder'] = $this->model_tool_image->resize('no_image.png', 100, 100);
+
         $data['header'] = $this->load->controller('common/header');
         $data['column_left'] = $this->load->controller('common/column_left');
         $data['footer'] = $this->load->controller('common/footer');
-
 
         $this->response->setOutput($this->load->view('extension/payment/beezyycashier', $data));
     }
@@ -153,10 +160,6 @@ class ControllerExtensionPaymentBeezyycashier extends Controller
 
         if (!$check) {
             $this->error['secret'] = $this->language->get('error_incorrect_secret');
-        }
-
-        if ($check && !$this->request->post['payment_beezyycashier_payment_method']) {
-            $this->error['payment_method'] = $this->language->get('error_payment_method');
         }
 
         return !$this->error;

@@ -44,23 +44,85 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label"
                                for="input-payment-method">{{ entry_payment_method }}</label>
-                        <div class="col-sm-10">
+                        <div class="col-sm-8">
                             <select name="payment_beezyycashier_payment_method" id="input-payment-method"
                                     class="form-control">
-                                <option value="0">Select Payment method!</option>
+                                <option value="0" selected="true"
+                                        disabled="disabled">{{ entry_payment_method }}</option>
                                 {% for payment_methods in payment_methods_beezyy %}
-                                    {% if payment_methods.id == payment_beezyycashier_payment_method %}
-                                        <option value="{{ payment_methods.id }}"
-                                                selected="selected">{{ payment_methods.title }}</option>
-                                    {% else %}
-                                        <option value="{{ payment_methods.id }}">{{ payment_methods.title }}</option>
-                                    {% endif %}
+                                    <option value="{{ payment_methods.id }}">{{ payment_methods.title }}</option>
                                 {% endfor %}
                             </select>
-                            {% if error_payment_method %}
-                                <div class="text-danger">{{ error_payment_method }}</div>
-                            {% endif %}
                         </div>
+                        <div class="col-sm-2 text-right">
+                            <button id="addMethod" class="btn btn-primary"><span class="glyphicon glyphicon-plus"
+                                                                                 aria-hidden="true"></span> {{ text_add_payment_method }}
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <h4 class="text-center">{{ text_select_payment_method }}</h4>
+                        <table id="payment-value" class="table table-striped table-bordered table-hover">
+                            <thead>
+                            <tr>
+                                <td class="text-center">{{ text_payment_method_id }}</td>
+                                <td class="text-center">{{ text_payment_method_name }}</td>
+                                <td class="text-center">{{ text_payment_method_image }}</td>
+                                <td class="text-center">{{ text_payment_method_sort }}</td>
+                                <td class="text-center hidden">{{ text_payment_method_apple_devices }}</td>
+                                <td></td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for payment_beezyycashier_pm_item in payment_beezyycashier_pm %}
+                                <tr id="pm-row-{{ payment_beezyycashier_pm_item.id }}">
+                                    <td class="payment_id"><input readonly="" type="text"
+                                                                  name="payment_beezyycashier_pm[{{ payment_beezyycashier_pm_item.id }}][id]"
+                                                                  value="{{ payment_beezyycashier_pm_item.id }}"
+                                                                  class="form-control text-center"></td>
+                                    <td>
+                                        {% for language in languages %}
+                                            <div class="input-group"><span class="input-group-addon"><img
+                                                            src="language/{{ language.code }}/{{ language.code }}.png"
+                                                            title="{{ language.name }}"/></span>
+                                                <input type="text"
+                                                       name="payment_beezyycashier_pm[{{ payment_beezyycashier_pm_item.id }}][pm_language][{{ language.language_id }}][name]"
+                                                       value="{{ payment_beezyycashier_pm_item['pm_language'][language.language_id]['name'] }}"
+                                                       placeholder="{{ entry_option_value }}" class="form-control"/>
+                                            </div>
+                                        {% endfor %}
+                                    </td>
+                                    <td class="text-center"><a href=""
+                                                               id="thumb-image{{ payment_beezyycashier_pm_item.id }}"
+                                                               data-toggle="image" class="img-thumbnail"><img
+                                                    src="{% if payment_beezyycashier_pm_item.image is empty %}{{ placeholder }}{% else %}/image/{{ payment_beezyycashier_pm_item.image }}{% endif %}"
+                                                    alt="" title="" data-placeholder="{{ placeholder }}"/></a><input
+                                                type="hidden"
+                                                name="payment_beezyycashier_pm[{{ payment_beezyycashier_pm_item.id }}][image]"
+                                                value="{{ payment_beezyycashier_pm_item['image'] }}"
+                                                id="input-image{{ payment_beezyycashier_pm_item.id }}"/></td>
+                                    <td class="text-right"><input type="text"
+                                                                  name="payment_beezyycashier_pm[{{ payment_beezyycashier_pm_item.id }}][sort]"
+                                                                  value="{{ payment_beezyycashier_pm_item.sort }}"
+                                                                  class="form-control"></td>
+                                    <td class="hidden"><select class="form-control"
+                                                name="payment_beezyycashier_pm[{{ payment_beezyycashier_pm_item.id }}][apple]">
+                                            <option value="0">No</option>
+                                            <option {% if payment_beezyycashier_pm_item.apple %}selected{% endif %}
+                                                    value="1">Yes
+                                            </option>
+                                        </select>
+                                    </td>
+                                    <td class="text-right">
+                                        <button type="button"
+                                                onclick="$('#pm-row-{{ payment_beezyycashier_pm_item.id }}').remove();"
+                                                data-toggle="tooltip" title="{{ button_remove }}"
+                                                class="btn btn-danger"><i class="fa fa-minus-circle"></i></button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label" for="input-total"><span data-toggle="tooltip"
@@ -88,7 +150,8 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="input-order-fail-status">{{ entry_fail_status }}</label>
+                        <label class="col-sm-2 control-label"
+                               for="input-order-fail-status">{{ entry_fail_status }}</label>
                         <div class="col-sm-10">
                             <select name="payment_beezyycashier_order_fail_status" id="input-order-fail-status"
                                     class="form-control">
@@ -146,4 +209,45 @@
         </div>
     </div>
 </div>
+<script>
+    $("#addMethod").click(function (e) {
+        e.preventDefault(e);
+        let parentEl = $('#input-payment-method').parent().parent();
+        let selectedEl = $('#input-payment-method option:selected');
+        if (selectedEl.val() == 0) {
+            parentEl.addClass('has-error');
+            return false;
+        }
+        if ($('#pm-row-' + selectedEl.val()).length != 0) {
+            alert('This Payment Method Already Exist');
+            return false;
+        }
+        parentEl.removeClass('has-error');
+        addPmList(selectedEl.val(), selectedEl.text());
+
+    });
+
+    function addPmList(id, name) {
+        html = '<tr id="pm-row-' + id + '">';
+        html += '  <td class="payment_id"><input readonly="" type="text" name="payment_beezyycashier_pm[' + id + '][id]" value="' + id + '" class="form-control text-center"></td>';
+        html += '  <td class="text-center">';
+        {% for language in languages %}
+        html += '    <div class="input-group">';
+        html += '      <span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /></span><input type="text" name="payment_beezyycashier_pm[' + id + '][pm_language][{{ language.language_id }}][name]" value="' + name + '" placeholder="{{ text_payment_method_name }}" class="form-control" />';
+        html += '    </div>';
+        {% endfor %}
+        html += '  </td>';
+        html += '  <td class="text-center"><a href="" id="thumb-image' + id + '" data-toggle="image" class="img-thumbnail"><img src="{{ placeholder }}" alt="" title="" data-placeholder="{{ placeholder }}" /></a><input type="hidden" name="payment_beezyycashier_pm[' + id + '][image]" value="" id="input-image' + id + '" /></td>';
+        html += '  <td class="text-right"><input type="text" name="payment_beezyycashier_pm[' + id + '][sort]" value="0" class="form-control"></td>';
+        html += '  <td class="hidden"><select class="form-control" name="payment_beezyycashier_pm[' + id + '][apple]"><option value="0">No</option><option value="1">Yes</option></select></td>';
+        html += '  <td class="text-right"><button type="button" onclick="$(\'#pm-row-' + id + '\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
+        html += '</tr>';
+        $('#payment-value tbody').append(html);
+    }
+</script>
+<style>
+    .payment_id {
+        width: 150px;
+    }
+</style>
 {{ footer }}

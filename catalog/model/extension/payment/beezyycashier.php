@@ -2,7 +2,7 @@
 
 class ModelExtensionPaymentBeezyycashier extends Model
 {
-    public function getMethod($address, $total)
+    public function getMethod($address, $total, $full = false)
     {
         $this->load->language('extension/payment/beezyycashier');
 
@@ -21,12 +21,31 @@ class ModelExtensionPaymentBeezyycashier extends Model
         $method_data = array();
 
         if ($status) {
-            $method_data = array(
-                'code' => 'beezyycashier',
-                'title' => $this->language->get('text_title'),
-                'terms' => '',
-                'sort_order' => $this->config->get('payment_beezyycashier_sort_order')
-            );
+            if ($full) {
+                $virtual_methods = unserialize($this->config->get('payment_beezyycashier_pm'));
+                if ($virtual_methods) {
+                    foreach ($virtual_methods as $item) {
+                        $image = '';
+                        if (!empty($item['image'])){
+                            $image = '<img id="beezyycashier-'.$item['id'].'" class="img-responsive" src="/image/'.$item['image'].'">';
+                        }
+                        $method_info = array(
+                            'code' => 'beezyycashier-' . $item['id'],
+                            'title' => $image.$item['pm_language'][(int)$this->config->get('config_language_id')]['name'],
+                            'terms' => '',
+                            'sort_order' => $item['sort']
+                        );
+                        $method_data[] = $method_info;
+                    }
+                }
+            } else {
+                $method_data = array(
+                    'code' => 'beezyycashier',
+                    'title' => $this->language->get('text_title'),
+                    'terms' => '',
+                    'sort_order' => $this->config->get('payment_beezyycashier_sort_order')
+                );
+            }
         }
 
         return $method_data;
