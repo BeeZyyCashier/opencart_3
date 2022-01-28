@@ -31,20 +31,28 @@ class ControllerExtensionPaymentBeezyycashier extends Controller
         $requestData['urls']['fail'] = $this->url->link('checkout/failure', false);
         $requestData['urls']['notification'] = $this->url->link('extension/payment/beezyycashier/callback', false);
         $requestData['payment_method'] = substr($this->session->data['payment_method']['code'], 14);
-
+        $data['fields'] = [];
         $invoice = $this->createInvoice($requestData);
+        if (!isset($invoice['message'])){
+            if ($invoice){
+                $data['method'] = $invoice['data']['method'];
+                if($invoice['data']['fields']){
+                    $data['fields'] = $invoice['data']['fields'];
+                }
+            }
+            //save extradata
+            $this->load->model('extension/payment/beezyycashier');
+            $extraData = [
+                'reference' => $invoice['data']['reference'],
+                'payment_id' => $invoice['data']['payment_id'],
+            ];
+            $extraData = json_encode($extraData, JSON_FORCE_OBJECT);
+            $this->model_extension_payment_beezyycashier->setExtradata($this->session->data['order_id'], $extraData);
 
-        //save extradata
-        $this->load->model('extension/payment/beezyycashier');
-        $extraData = [
-            'reference' => $invoice['data']['reference'],
-            'payment_id' => $invoice['data']['payment_id'],
-        ];
-        $extraData = json_encode($extraData, JSON_FORCE_OBJECT);
-        $this->model_extension_payment_beezyycashier->setExtradata($this->session->data['order_id'], $extraData);
-
-        $data['action'] = $invoice['data']['url'];
-
+            $data['action'] = $invoice['data']['url'];
+        } else {
+            $data['bz_error'] = $invoice['message'];
+        }
         return $this->load->view('extension/payment/beezyycashier', $data);
     }
 
