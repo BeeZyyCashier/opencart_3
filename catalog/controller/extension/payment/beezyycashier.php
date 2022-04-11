@@ -36,7 +36,7 @@ class ControllerExtensionPaymentBeezyycashier extends Controller
         if (!isset($invoice['message'])){
             if ($invoice){
                 $data['method'] = $invoice['data']['method'];
-                if($invoice['data']['fields']){
+                if(isset($invoice['data']['fields'])){
                     $data['fields'] = $invoice['data']['fields'];
                 }
             }
@@ -53,6 +53,9 @@ class ControllerExtensionPaymentBeezyycashier extends Controller
         } else {
             $data['bz_error'] = $invoice['message'];
         }
+        $data['iframe'] =  $this->config->get('payment_beezyycashier_iframe');
+        $data['iframe_w'] =  $this->config->get('payment_beezyycashier_iframe_w');
+        $data['iframe_h'] =  $this->config->get('payment_beezyycashier_iframe_h');
         return $this->load->view('extension/payment/beezyycashier', $data);
     }
 

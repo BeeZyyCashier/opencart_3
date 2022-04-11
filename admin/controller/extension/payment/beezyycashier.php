@@ -108,6 +108,24 @@ class ControllerExtensionPaymentBeezyycashier extends Controller
             $data['payment_beezyycashier_status'] = $this->config->get('payment_beezyycashier_status');
         }
 
+        if (isset($this->request->post['payment_beezyycashier_iframe'])) {
+            $data['payment_beezyycashier_iframe'] = $this->request->post['payment_beezyycashier_iframe'];
+        } else {
+            $data['payment_beezyycashier_iframe'] = $this->config->get('payment_beezyycashier_iframe');
+        }
+
+        if (isset($this->request->post['payment_beezyycashier_iframe_w'])) {
+            $data['payment_beezyycashier_iframe_w'] = $this->request->post['payment_beezyycashier_iframe_w'];
+        } else {
+            $data['payment_beezyycashier_iframe_w'] = $this->config->get('payment_beezyycashier_iframe_w');
+        }
+
+        if (isset($this->request->post['payment_beezyycashier_iframe_h'])) {
+            $data['payment_beezyycashier_iframe_h'] = $this->request->post['payment_beezyycashier_iframe_h'];
+        } else {
+            $data['payment_beezyycashier_iframe_h'] = $this->config->get('payment_beezyycashier_iframe_h');
+        }
+
         if (isset($this->request->post['payment_beezyycashier_sort_order'])) {
             $data['payment_beezyycashier_sort_order'] = $this->request->post['payment_beezyycashier_sort_order'];
         } else {

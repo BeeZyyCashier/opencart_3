@@ -17,6 +17,10 @@ $_['entry_fail_status'] = 'Order Fail Status';
 $_['entry_geo_zone'] = 'Geo Zone';
 $_['entry_status'] = 'Status';
 $_['entry_sort_order'] = 'Sort Order';
+$_['entry_iframe'] = 'Use IFrame';
+$_['entry_iframe_size'] = 'IFrame size';
+$_['entry_iframe_h'] = 'IFrame height';
+$_['entry_iframe_w'] = 'IFrame width';
 
 
 // Payment Method Table
