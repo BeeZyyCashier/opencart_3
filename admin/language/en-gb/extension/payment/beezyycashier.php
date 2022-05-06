@@ -18,9 +18,9 @@ $_['entry_geo_zone'] = 'Geo Zone';
 $_['entry_status'] = 'Status';
 $_['entry_sort_order'] = 'Sort Order';
 $_['entry_iframe'] = 'Use IFrame';
-$_['entry_iframe_size'] = 'IFrame size';
-$_['entry_iframe_h'] = 'IFrame height';
-$_['entry_iframe_w'] = 'IFrame width';
+$_['entry_iframe_size'] = 'IFrame size <br>(Set 0 to 100%)';
+$_['entry_iframe_h'] = 'IFrame height (Set 0 to height 100%)';
+$_['entry_iframe_w'] = 'IFrame width (Set 0 to width 100%)';
 
 
 // Payment Method Table
