@@ -2,8 +2,8 @@
 <modification>
     <name>BeezyyCashier</name>
     <code>beezyycashier</code>
-    <version>1.0</version>
-    <author>Test</author>
+    <version>1.1</version>
+    <author>BeezyyCashier</author>
     <link>https://beezyycashier.com</link>
 
     <file path="catalog/controller/checkout/payment_method.php">
@@ -33,7 +33,83 @@
         </operation>
     </file>
 
-    <file path="catalog/controller/checkout/confirm.php">
+    <file path="catalog/controller/extension/quickcheckout/payment_method.php">
+        <operation error="skip">
+            <search index="0"><![CDATA[$method = $this->{'model_extension_payment_' . $result['code']}->getMethod($payment_address, $total);]]>
+            </search>
+            <add position="replace" offset="9">
+                <![CDATA[if ($result['code'] == 'beezyycashier') {
+                        $methods = $this->model_extension_payment_beezyycashier->getMethod($payment_address, $total, true);
+                        foreach ($methods as $item) {
+                            $method_data[$item['code']] = $item;
+                        }
+                    } else {
+                        $method = $this->{'model_extension_payment_' . $result['code']}->getMethod($payment_address, $total);
+					if ($method) {
+						if ($recurring) {
+							if (property_exists($this->{'model_extension_payment_' . $result['code']}, 'recurringPayments') && $this->{'model_extension_payment_' . $result['code']}->recurringPayments()) {
+								$method_data[$result['code']] = $method;
+							}
+						} else {
+							$method_data[$result['code']] = $method;
+						}
+					}
+                    }]]>
+            </add>
+        </operation>
+    </file>
+
+    <file path="catalog/controller/extension/quickcheckout/payment_method.php">
+        <operation error="skip">
+            <search index="0"><![CDATA[$method = $this->{'model_extension_payment_' . $result['code']}->getMethod($payment_address, $total);]]>
+            </search>
+            <add position="replace" offset="9">
+                <![CDATA[if ($result['code'] == 'beezyycashier') {
+                        $methods = $this->model_extension_payment_beezyycashier->getMethod($payment_address, $total, true);
+                        foreach ($methods as $item) {
+                            $method_data[$item['code']] = $item;
+                        }
+                    } else {
+                        $method = $this->{'model_extension_payment_' . $result['code']}->getMethod($payment_address, $total);
+					if ($method) {
+						if ($recurring) {
+							if (property_exists($this->{'model_extension_payment_' . $result['code']}, 'recurringPayments') && $this->{'model_extension_payment_' . $result['code']}->recurringPayments()) {
+								$method_data[$result['code']] = $method;
+							}
+						} else {
+							$method_data[$result['code']] = $method;
+						}
+					}
+                    }]]>
+            </add>
+        </operation>
+
+        <operation error="skip">
+            <search index="1"><![CDATA[$method = $this->{'model_extension_payment_' . $result['code']}->getMethod($payment_address, $total);]]>
+            </search>
+            <add position="replace" offset="10">
+                <![CDATA[if ($result['code'] == 'beezyycashier') {
+                        $methods = $this->model_extension_payment_beezyycashier->getMethod($payment_address, $total, true);
+                        foreach ($methods as $item) {
+                            $method_data[$item['code']] = $item;
+                        }
+                    } else {
+                        $method = $this->{'model_extension_payment_' . $result['code']}->getMethod($payment_address, $total);
+					if ($method) {
+						if ($recurring) {
+							if (property_exists($this->{'model_extension_payment_' . $result['code']}, 'recurringPayments') && $this->{'model_extension_payment_' . $result['code']}->recurringPayments()) {
+								$method_data[$result['code']] = $method;
+							}
+						} else {
+							$method_data[$result['code']] = $method;
+						}
+					}
+                    }]]>
+            </add>
+        </operation>
+    </file>
+
+    <file path="catalog/controller/checkout/confirm.php,catalog/controller/extension/quickcheckout/confirm.php">
         <operation error="skip">
             <search><![CDATA[$data['payment'] = $this->load->controller('extension/payment/' . $this->session->data['payment_method']['code']);]]>
             </search>

@@ -1,18 +1,23 @@
 {% if bz_error %}
-<h4 style="color: red" class="pull-right">{{ bz_error }}</h4>
+  <h4 style="color: red" class="pull-right">{{ bz_error }}</h4>
 {% else %}
   {% if iframe %}
-    <iframe src="{{ action }}" width="{% if iframe_w == 0 %}100%{% else %}{{ iframe_w }}{% endif %}" height="{% if iframe_h == 0 %}100%{% else %}{{ iframe_h }}{% endif %}" style="border: 0"></iframe>
+    <iframe src="{{ action }}" width="{{ iframe_w }}" height="{{ iframe_h }}" style="border: 0"></iframe>
   {% else %}
-<form action="{{ action }}" method="{{ method }}">
-  <div class="buttons">
-    <div class="pull-right">
-      {% for key, value in fields %}
-        <input type="hidden" name="{{ key }}" value="{{ value }}">
-      {% endfor %}
-      <input type="submit" value="{{ button_confirm }}" class="btn btn-primary" />
-    </div>
-  </div>
-</form>
+    <form style="display: none;" id="beezyy_form" name="beezyy_form" action="{{ action }}" method="{{ method }}">
+      <div class="buttons">
+        <div class="pull-right">
+          {% for key, value in fields %}
+            <input type="hidden" name="{{ key }}" value="{{ value }}">
+          {% endfor %}
+          <input id="button_submit" type="submit" value="{{ button_confirm }}" class="btn btn-primary" />
+        </div>
+      </div>
+    </form>
+    <script>
+      $( document ).ready(function() {
+        $( "#beezyy_form" ).submit();
+      });
+    </script>
   {% endif %}
 {% endif %}
